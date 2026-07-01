@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سورپرایز شاپرک 🦋</title>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css');
+  
+  body, html {
+    margin: 0; 
+    padding: 0; 
+    width: 100%; 
+    height: 100%;
+    background-color: #02010a;
+    overflow: hidden;
+    font-family: 'Vazirmatn', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* افکت نفس کشیدن پس‌زمینه */
+    animation: bgPulse 8s infinite alternate ease-in-out;
+  }
+
+  @keyframes bgPulse {
+    0% { background-color: #02010a; box-shadow: inset 0 0 50px rgba(161, 140, 209, 0.0); }
+    100% { background-color: #0d041c; box-shadow: inset 0 0 150px rgba(161, 140, 209, 0.15); }
+  }
+  
+  canvas {
+    position: absolute;
+    top: 0; 
+    left: 0;
+    z-index: 1;
+  }
+  
+  #ui-layer {
+    position: absolute;
+    z-index: 10;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  #start-btn {
+    pointer-events: auto;
+    padding: 15px 40px;
+    font-size: 1.5rem;
+    color: #fff;
+    background: transparent;
+    border: 2px solid #a18cd1;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.5s ease;
+    box-shadow: 0 0 20px rgba(161, 140, 209, 0.4), inset 0 0 20px rgba(161, 140, 209, 0.4);
+    text-shadow: 0 0 10px #fff;
+  }
+  
+  #start-btn:hover {
+    background: rgba(161, 140, 209, 0.2);
+    box-shadow: 0 0 50px rgba(161, 140, 209, 1), inset 0 0 30px rgba(161, 140, 209, 0.8);
+    transform: scale(1.05);
+  }
+  
+  .butterfly-container {
+    display: none;
+    perspective: 1000px;
+    margin: 0 auto 30px auto;
+    width: 250px;
+    height: 200px;
+    position: relative;
+    transition: transform 0.2s ease-out; 
+  }
+  
+  .butterfly-float {
+    width: 100%;
+    height: 100%;
+    animation: floatButterfly 4s infinite ease-in-out;
+  }
+  
+  @keyframes floatButterfly {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-30px); }
+  }
+  
+  .wing {
+    position: absolute;
+    width: 120px;
+    height: 180px;
+    top: 10px;
+    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #f093fb 100%);
+    box-shadow: 0 0 40px #4facfe, inset 0 0 20px rgba(255, 255, 255, 0.8);
+    opacity: 0.85;
+  }
+  
+  .wing-left {
+    left: 5px;
+    border-radius: 100% 20% 40% 100%;
+    transform-origin: right center;
+    animation: flapLeft 0.15s infinite alternate ease-in-out;
+  }
+  
+  .wing-right {
+    right: 5px;
+    border-radius: 20% 100% 100% 40%;
+    transform-origin: left center;
+    animation: flapRight 0.15s infinite alternate ease-in-out;
+  }
+  
+  .body {
+    position: absolute;
+    width: 10px;
+    height: 110px;
+    background: #fff;
+    border-radius: 10px;
+    left: 120px;
+    top: 40px;
+    box-shadow: 0 0 20px #fff;
+  }
+  
+  @keyframes flapLeft {
+    0% { transform: rotateY(0deg) rotateX(20deg); }
+    100% { transform: rotateY(75deg) rotateX(0deg); }
+  }
+  @keyframes flapRight {
+    0% { transform: rotateY(0deg) rotateX(20deg); }
+    100% { transform: rotateY(-75deg) rotateX(0deg); }
+  }
+
+  .message-box {
+    display: none;
+    color: #fff;
+  }
+  
+  h1 {
+    font-size: 3.5rem;
+    margin: 0;
+    background: linear-gradient(to right, #00f2fe, #f093fb, #00f2fe);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: glowText 3s infinite alternate, shineText 5s linear infinite;
+  }
+  
+  @keyframes shineText { to { background-position: 200% center; } }
+  @keyframes glowText {
+    from { filter: drop-shadow(0 0 10px rgba(240, 147, 251, 0.3)); }
+    to { filter: drop-shadow(0 0 30px rgba(0, 242, 254, 0.8)); }
+  }
+  
+  .subtitle {
+    font-size: 1.4rem;
+    line-height: 2;
+    margin-top: 20px;
+    color: #e2e8f0;
+    opacity: 0;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+  }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 2rem; }
+    .subtitle { font-size: 1.1rem; }
+    .butterfly-container { transform: scale(0.7); margin-bottom: 10px; }
+  }
+</style>
+</head>
+<body>
+  
+  <audio id="magic-music" loop>
+    <source src="tavalod.mp3" type="audio/mpeg">
+  </audio>
+
+  <canvas id="canvas"></canvas>
+  
+  <div id="ui-layer">
+    <button id="start-btn" onclick="startMagic()">برای شاپرک... لمس کن 🦋</button>
+    
+    <div class="butterfly-container" id="butterfly">
+      <div class="butterfly-float">
+        <div class="wing wing-left"></div>
+        <div class="wing wing-right"></div>
+        <div class="body"></div>
+      </div>
+    </div>
+    
+    <div class="message-box" id="message">
+      <h1 id="main-text"></h1>
+      <div class="subtitle" id="sub-text"></div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Particle {
+      constructor(x, y, isExplosion = false) {
+        this.x = x;
+        this.y = y;
+        this.isExplosion = isExplosion;
+        this.size = Math.random() * 3 + 1;
+        
+        if (isExplosion) {
+          this.speedX = (Math.random() - 0.5) * 30;
+          this.speedY = (Math.random() - 0.5) * 30;
+          this.size = Math.random() * 5 + 2;
+          this.decay = Math.random() * 0.01 + 0.005;
+        } else {
+          this.speedX = (Math.random() - 0.5) * 2;
+          this.speedY = (Math.random() - 0.5) * 2 - 1; 
+          this.decay = Math.random() * 0.02 + 0.01;
+        }
+        this.life = 1;
+        this.hue = Math.random() * 80 + 220; 
+      }
+      
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.isExplosion) this.speedY += 0.05;
+        else this.speedY -= 0.02;
+        this.life -= this.decay;
+      }
+      
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${this.hue}, 100%, 70%, ${this.life})`;
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = `hsl(${this.hue}, 100%, 60%)`;
+        ctx.fill();
+      }
+    }
+
+    function animateParticles() {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = 'rgba(2, 1, 10, 0.15)'; 
+      ctx.fillRect(0, 0, width, height);
+      ctx.globalCompositeOperation = 'lighter';
+      
+      if (Math.random() < 0.15 && mode === 'magic') {
+        particles.push(new Particle(Math.random() * width, height + 10, false));
+      }
+
+      for (let i = 0; i < particles.length; i++) {
+        let p = particles[i];
+        p.update();
+        p.draw();
+        if (p.life <= 0 || p.y < -10 || p.x < -10 || p.x > width + 10) {
+          particles.splice(i, 1);
+          i--;
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+
+    let mode = 'waiting';
+    animateParticles();
+
+    function startMagic() {
+      // پخش شدن موسیقی
+      const music = document.getElementById('magic-music');
+      music.volume = 0.5; // بلندی صدا 50 درصد
+      music.play().catch(e => console.log("موزیک پیدا نشد، مطمئن شوید آهنگ کنار فایل است"));
+
+      document.getElementById('start-btn').style.display = 'none';
+      mode = 'magic';
+      
+      const cx = width / 2;
+      const cy = height / 2;
+      for(let i = 0; i < 250; i++) {
+        particles.push(new Particle(cx, cy, true));
+      }
+
+      setTimeout(() => {
+        document.getElementById('butterfly').style.display = 'block';
+        document.getElementById('message').style.display = 'block';
+        
+        typeText("شاپرک زیبای من، تولدت مبارک", "main-text", 120, () => {
+          const sub = document.getElementById('sub-text');
+          sub.innerHTML = "تو مثل این شاپرک، از جنس نوری و تو تاریک‌ترین شب‌ها هم می‌درخشی.<br>آرزو می‌کنم همیشه آزاد، جسور و رها پرواز کنی.";
+          sub.style.transition = "opacity 2.5s ease-in-out";
+          sub.style.opacity = 1;
+        });
+      }, 1000);
+    }
+
+    function typeText(text, id, speed, callback) {
+      let i = 0;
+      let el = document.getElementById(id);
+      el.innerHTML = "";
+      function type() {
+        if (i < text.length) {
+          el.innerHTML += text.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        } else if (callback) {
+          setTimeout(callback, 800);
+        }
+      }
+      type();
+    }
+
+    const butterflyEl = document.getElementById('butterfly');
+    
+    window.addEventListener('mousemove', (e) => {
+      if (mode === 'magic') {
+        const xAxis = (window.innerWidth / 2 - e.pageX) / 20;
+        const yAxis = (window.innerHeight / 2 - e.pageY) / 20;
+        butterflyEl.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+
+        for(let i = 0; i < 3; i++) {
+          particles.push(new Particle(e.clientX, e.clientY, false));
+        }
+      }
+    });
+    
+    window.addEventListener('touchmove', (e) => {
+      if (mode === 'magic') {
+        let touch = e.touches[0];
+        const xAxis = (window.innerWidth / 2 - touch.clientX) / 20;
+        const yAxis = (window.innerHeight / 2 - touch.clientY) / 20;
+        butterflyEl.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+
+        for(let i = 0; i < 3; i++) {
+          particles.push(new Particle(touch.clientX, touch.clientY, false));
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+
