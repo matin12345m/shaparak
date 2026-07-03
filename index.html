@@ -250,8 +250,8 @@
     
     <div class="glass-box">
       <p class="cake-text-content" id="cake-text">
-        چشمانت را ببند و از تـه دل یک آرزوی قشنگ کن... ✨<br>
-        <span class="highlight">حالا برای خاموش کردن شمع، روی کیک ضربه بزن</span>
+       اول چشماتو ببند و از ته دل یه آرزوی قشنگ کن ...✨<br>
+        <span class="highlight">حالا برا فوت کردن شمع ، روی کیک بزن خاموش میشه 😁</span>
       </p>
     </div>
   </div>
@@ -336,9 +336,9 @@
       setTimeout(() => {
         document.getElementById('butterfly').style.display = 'block';
         document.getElementById('message').style.display = 'block';
-        typeText("شاپرک جان <br> تولدت مبارک", "main-text", 100, () => {
+        typeText("شاپرک جان * تولدت مبارک", "main-text", 100, () => {
           const sub = document.getElementById('sub-text');
-          sub.innerHTML = "تو مثل این شاپرک، از جنس نوری و تو تاریک‌ترین شب‌ها هم می‌درخشی.<br>آرزو می‌کنم همیشه آزاد، جسور و رها پرواز کنی.";
+          sub.innerHTML = "آرزو می‌کنم به همه چیزایی که دلت می‌خواد برسی<br> همیشه سلامت و خوشحال باشی تولدت هزاران بار مبارک  🎂🎈💖";
           sub.style.transition = "opacity 2.5s ease-in-out"; sub.style.opacity = 1;
           drawSingleHeart();
           setTimeout(() => { document.getElementById('next-btn').style.display = 'inline-block'; }, 2000);
@@ -399,10 +399,19 @@
     }
 
     function typeText(text, id, speed, callback) {
-      let i = 0; let el = document.getElementById(id); el.innerHTML = "";
-      function type() { if (i < text.length) { el.innerHTML += text.charAt(i); i++; setTimeout(type, speed); } else if (callback) setTimeout(callback, 500); }
-      type();
+    let i = 0; let el = document.getElementById(id); el.innerHTML = "";
+    function type() { 
+      if (i < text.length) { 
+        let char = text.charAt(i);
+        // اگر به ستاره رسید بره خط بعدی، در غیر این صورت خود حرف رو تایپ کنه
+        if (char === '*') { el.innerHTML += '<br>'; } 
+        else { el.innerHTML += char; }
+        i++; 
+        setTimeout(type, speed); 
+      } else if (callback) setTimeout(callback, 500); 
     }
+    type();
+  }
   </script>
 </body>
 </html>
